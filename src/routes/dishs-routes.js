@@ -8,6 +8,7 @@ const dishsController = new DishsController();
 
 dishsRoutes.post("/", dishsController.create);
 dishsRoutes.get("/:id", dishsController.show);
+dishsRoutes.put("/:id", dishsController.update);
 dishsRoutes.delete("/:id", dishsController.delete);
 
 module.exports = dishsRoutes;
