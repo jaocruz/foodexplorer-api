@@ -56,6 +56,14 @@ class DishsController {
     return response.json();
   };
 
+  async delete (request, response) {
+    const { id } = request.params;
+
+    await knex("dishs").where({ id }).delete();
+
+    return response.json();
+  };
+
   async show (request, response) {
     const { id } = request.params;
 
@@ -67,12 +75,44 @@ class DishsController {
     });
   };
 
-  async delete (request, response) {
-    const { id } = request.params;
+  async index (request, response) {
+    const { name, ingredients } = request.query;
 
-    await knex("dishs").where({ id }).delete();
+    let dishs;
 
-    return response.json();
+    if(ingredients){     
+      const filterIngredients = ingredients.split(",").map(ingredient => ingredient.trim());
+
+      dishs = await knex("dishs")
+        .select([
+          "dishs.id",
+          "dishs.name",
+          "dishs.category"
+        ])
+        .innerJoin("ingredients", "dishs.id", "ingredients.dish_id")
+        .whereIn("ingredients.name", filterIngredients)
+        .whereLike("dishs.name", `%${name}%`)
+        .groupBy("ingredients.name")
+    }
+    
+    else {
+      dishs = await knex("dishs")
+        .whereLike("name", `%${name}%`)
+        .orderBy("category");
+    }
+
+    const Ingredients = await knex("ingredients")
+
+    const dishWithIngredients = dishs.map(dish => {
+      const dishIngredients = Ingredients.filter(ingredient => ingredient.dish_id === dish.id);
+
+      return {
+        ...dish,
+        ingredients: dishIngredients
+      }
+    });
+
+    return response.json(dishWithIngredients);
   };
 }
 
