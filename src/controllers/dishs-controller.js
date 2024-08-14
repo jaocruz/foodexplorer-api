@@ -18,7 +18,7 @@ class DishsController {
 
     await knex("ingredients").insert(ingredientsInsert);
 
-    response.json();
+    return response.json();
   };
 
   async update (request, response) {

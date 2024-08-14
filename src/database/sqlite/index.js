@@ -1,7 +1,7 @@
-const path = require("path")
+const path = require("path");
 
-const sqlite = require("sqlite")
-const sqlite3 = require("sqlite3")
+const sqlite = require("sqlite");
+const sqlite3 = require("sqlite3");
 
 async function sqliteConnection(){
   const database = await sqlite.open({
