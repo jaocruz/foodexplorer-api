@@ -1,8 +1,12 @@
 const Router = require("express");
 
+const multer = require("multer");
+const uploadConfig = require("../configs/upload");
+
 const DishsController = require("../controllers/dishs-controller");
 
 const dishsRoutes = Router();
+const upload = multer(uploadConfig.MULTER);
 
 const dishsController = new DishsController();
 
