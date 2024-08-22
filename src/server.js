@@ -6,9 +6,12 @@ const routes = require("./routes");
 const database = require("./database/sqlite");
 
 const appError = require("./utils/app-error");
+const uploadConfig = require("./configs/upload");
 
 const app = express();
 app.use(express.json());
+
+app.use("/files", express.static(uploadConfig.UPLOADS_FOLDER))
 
 app.use(routes);
 
