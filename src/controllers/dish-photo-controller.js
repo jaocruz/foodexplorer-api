@@ -1,5 +1,4 @@
 const knex = require("../database/knex");
-const appError = require("../utils/app-error");
 const DiskStorage = require("../providers/disk-storage");
 
 class DishPhotoController {
