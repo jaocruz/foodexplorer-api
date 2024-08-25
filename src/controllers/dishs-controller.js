@@ -1,25 +1,42 @@
 const knex = require("../database/knex");
 const appError = require("../utils/app-error");
 const sqliteConnection = require("../database/sqlite");
+const DiskStorage = require("../providers/disk-storage");
 
 class DishsController {
   async create (request, response) {
     const {name, category, price, description, ingredients} = request.body;
+    const photo = request.file;
 
-    const [dish_id] = await knex("dishs").insert({
-      name, category, price, description });
+    try{
+      const diskStorage = new DiskStorage();
+      let filename = null;
 
-    const ingredientsInsert = ingredients.map(name => {
-      return {
-        dish_id,
-        name
+      if(photo) {
+        filename = await diskStorage.saveFile(photo.filename);
       }
-    });
 
-    await knex("ingredients").insert(ingredientsInsert);
+      const [dish_id] = await knex("dishs").insert({
+        name, category, price, description, photo: filename });
 
-    return response.json();
-  };
+      const ingredientsInsert = ingredients.map(name => {
+        return {
+          dish_id,
+          name
+        }
+      });
+
+      await knex("ingredients").insert(ingredientsInsert);
+
+      return response.json({ id: dish_id, photo: filename });
+    }
+
+    catch(error) {
+      console.error("Erro ao criar prato:", error);
+      return response.status(500).json({error: "Internal Server Error"})
+    }
+  }
+  ;
 
   async update (request, response) {
     const {name, category, price, description, ingredients} = request.body;
@@ -79,7 +96,6 @@ class DishsController {
     const { name, ingredients } = request.query;
 
     let dishs = knex("dishs")
-    .select(["dishs.id", "dishs.name", "dishs.category"]);
 
     if(ingredients) {
       const filterIngredients = ingredients
