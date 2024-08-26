@@ -50,26 +50,33 @@ class DishsController {
       throw new appError("Prato não encontrado.")
     };
 
-    dish.name = name;
-    dish.category = category;
-    dish.price = price;
-    dish.description = description;
-
     await database.run(`UPDATE dishs SET
       name = ?, category = ?, price = ?, description = ? WHERE id = ?`,
-      [dish.name, dish.category, dish.price, dish.description, id]
+      [name, category, price, description, id]
     );
 
     await database.run("DELETE FROM ingredients WHERE dish_id = ?", [id]);
 
-    const ingredientsInsert = ingredients.map(name => {
-      return {
-        dish_id: id,
-        name
-      }
-    });
+    if(ingredients) {
+      try {
+        const parsedIngredients = JSON.parse(ingredients);
 
-    await knex("ingredients").insert(ingredientsInsert);
+        if(!Array.isArray(parsedIngredients)) {
+          throw new appError("Ingredientes devem ser passados em um array.")
+        }
+
+        const ingredientsInsert = parsedIngredients.map(ingredient => ({
+          dish_id: id,
+          name: ingredient
+        }));
+
+        await knex("ingredients").insert(ingredientsInsert);
+      }
+
+    catch(error) {
+      return response.status(400).json({error: "Formato inválido"})
+    }
+  }
 
     return response.json();
   };
@@ -103,7 +110,7 @@ class DishsController {
       .split(",").map(ingredient = ingredient.trim());
 
       dishs = dishs
-      .innerJoin("ingredients", "dish.id", "inredients.dish_id")
+      .innerJoin("ingredients", "dish.id", "ingredients.dish_id")
       .whereIn("ingredients.name", filterIngredients)
       .groupBy("dishs.id", "dishs.name", "dishs.category")
     }

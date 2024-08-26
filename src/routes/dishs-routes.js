@@ -15,7 +15,7 @@ const dishPhotoController = new DishsPhotoController();
 dishsRoutes.get("/", dishsController.index);
 dishsRoutes.get("/:id", dishsController.show);
 dishsRoutes.post("/", upload.single("photo"), dishsController.create);
-dishsRoutes.put("/:id", dishsController.update);
+dishsRoutes.put("/:id", upload.single("photo"), dishsController.update);
 dishsRoutes.delete("/:id", dishsController.delete);
 
 dishsRoutes.patch("/:id/photo", upload.single("photo"), dishPhotoController.update);
