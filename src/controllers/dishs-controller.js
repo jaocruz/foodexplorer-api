@@ -45,19 +45,19 @@ class DishsController {
 
     const { id } = request.params;
 
-    const diskStorage = new DiskStorage();
-    let filename = null;
-
-    if(photo) {
-      filename = await diskStorage.saveFile(photo.filename);
-    }
-
     const database = await sqliteConnection();
     const dish = await database.get("SELECT * FROM dishs WHERE id = (?)", [id]);
 
     if (!dish) {
       throw new appError("Prato não encontrado.")
     };
+
+    let filename = dish.photo;
+    
+    if(photo) {
+      const diskStorage = new DiskStorage();
+      filename = await diskStorage.saveFile(photo.filename);
+    }
 
     await database.run(`UPDATE dishs SET
       name = ?, photo = ?, category = ?, price = ?, description = ? WHERE id = ?`,
