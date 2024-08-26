@@ -19,7 +19,9 @@ class DishsController {
       const [dish_id] = await knex("dishs").insert({
         name, category, price, description, photo: filename });
 
-      const ingredientsInsert = ingredients.map(name => {
+      const parsedIngredients = JSON.parse(ingredients);
+
+      const ingredientsInsert = parsedIngredients.map(name => {
         return {
           dish_id,
           name
@@ -35,8 +37,7 @@ class DishsController {
       console.error("Erro ao criar prato:", error);
       return response.status(500).json({error: "Internal Server Error"})
     }
-  }
-  ;
+  };
 
   async update (request, response) {
     const {name, category, price, description, ingredients} = request.body;
