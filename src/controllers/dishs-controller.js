@@ -41,7 +41,16 @@ class DishsController {
 
   async update (request, response) {
     const {name, category, price, description, ingredients} = request.body;
+    const photo = request.file;
+
     const { id } = request.params;
+
+    const diskStorage = new DiskStorage();
+    let filename = null;
+
+    if(photo) {
+      filename = await diskStorage.saveFile(photo.filename);
+    }
 
     const database = await sqliteConnection();
     const dish = await database.get("SELECT * FROM dishs WHERE id = (?)", [id]);
@@ -51,8 +60,8 @@ class DishsController {
     };
 
     await database.run(`UPDATE dishs SET
-      name = ?, category = ?, price = ?, description = ? WHERE id = ?`,
-      [name, category, price, description, id]
+      name = ?, photo = ?, category = ?, price = ?, description = ? WHERE id = ?`,
+      [name, filename, category, price, description, id]
     );
 
     await database.run("DELETE FROM ingredients WHERE dish_id = ?", [id]);
