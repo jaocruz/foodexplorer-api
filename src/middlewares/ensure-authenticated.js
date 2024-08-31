@@ -8,22 +8,22 @@ function ensureAuthenticated(request, response, next){
 
   if(!authHeader){
     throw new appError("JWT Token não informado", 401);
+  }
 
-    const [, token] = authHeader.split(" ");
+  const [, token] = authHeader.split(" ");
 
-    try{
-      const { sub: user_id } = verify(token, authConfig.jwt.secret);
+  try{
+    const { sub: user_id } = verify(token, authConfig.jwt.secret);
 
-      request.user = {
-        id: Number(user_id)
-      }
-
-      return next();
+    request.user = {
+      id: Number(user_id)
     }
 
-    catch {
-      throw new appError("JWT Token inválido", 401);
-    }
+    return next();
+  }
+
+  catch {
+    throw new appError("JWT Token inválido", 401);
   }
 }
 

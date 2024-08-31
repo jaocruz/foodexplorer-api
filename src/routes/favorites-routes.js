@@ -1,11 +1,14 @@
-const Router = require("express");
+const { Router } = require("express");
 
-const FavoritesController = require("../controllers/favorites-controller");
+const FavoritesController = require("../controllers/favorite-controller");
+const ensureAuthenticated = require("../middlewares/ensure-authenticated");
 
-const favoritesRoutes = Router();
+const favoriteRoutes = Router();
 
 const favoritesController = new FavoritesController();
 
-favoritesRoutes.get("/", favoritesController.index);
+favoriteRoutes.use(ensureAuthenticated);
 
-module.exports = favoritesRoutes;
+favoriteRoutes.post("/", favoritesController.create);
+
+module.exports = favoriteRoutes;
