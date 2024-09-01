@@ -18,6 +18,17 @@ class favoritesController {
 
     return response.json();
   };
+
+  async index(request, response){
+    const user_id = request.user.id;
+
+    let dishs = await knex("favorites")
+    .select(["favorites.id", "favorites.dish_id", "dishs.name", "dishs.photo"])
+    .where("favorites.user_id", user_id)
+    .innerJoin("dishs", "dishs.id", "favorites.dish_id")
+
+    return response.json(dishs);
+  }
 }
 
 module.exports = favoritesController;
