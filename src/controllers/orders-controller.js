@@ -24,6 +24,14 @@ class OrdersController {
     .where("orders.user_id", user_id);
 
     return response.json(orders);
+  };
+
+  async show(request, response) {
+    const { id } = request.params;
+
+    const order = await knex("orders").where({ id }).first();
+
+    return response.json({ order });
   }
 }
 
