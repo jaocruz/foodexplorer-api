@@ -10,5 +10,6 @@ const ordersController = new OrdersController();
 orderRoutes.use(ensureAuthenticated);
 
 orderRoutes.post("/", ordersController.create);
+orderRoutes.get("/", ordersController.index);
 
 module.exports = orderRoutes;

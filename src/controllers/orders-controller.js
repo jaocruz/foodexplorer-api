@@ -16,6 +16,15 @@ class OrdersController {
 
     return response.json(orderId);
   };
+
+  async index(request, response) {
+    const user_id = request.user.id;
+
+    let orders= await knex("orders")
+    .where("orders.user_id", user_id);
+
+    return response.json(orders);
+  }
 }
 
 module.exports = OrdersController;
