@@ -1,4 +1,5 @@
 const knex = require("../database/knex");
+const sqliteConnection = require("../database/sqlite");
 
 class OrdersController {
 
@@ -9,12 +10,23 @@ class OrdersController {
     const dishDetails = description.map(dish => `${dish.quantity} x ${dish.name}`).join(", ");
 
     const [orderId] = await knex("orders").insert({
-      status: "preparando",
+      status: "Pendente",
       details: dishDetails,
       user_id
     }).returning("id");
 
     return response.json(orderId);
+  };
+
+  async update(request, response) {
+    const { id } = request.params;
+    const { status } = request.body;
+
+    const order = await knex("orders")
+    .where({ id })
+    .update({ status });
+
+    return response.json();
   };
 
   async index(request, response) {
