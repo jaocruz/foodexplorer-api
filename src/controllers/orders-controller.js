@@ -1,5 +1,4 @@
 const knex = require("../database/knex");
-const sqliteConnection = require("../database/sqlite");
 
 class OrdersController {
 
@@ -22,7 +21,7 @@ class OrdersController {
     const { id } = request.params;
     const { status } = request.body;
 
-    const order = await knex("orders")
+    await knex("orders")
     .where({ id })
     .update({ status });
 
@@ -33,7 +32,6 @@ class OrdersController {
     const user_id = request.user.id;
 
     let orders= await knex("orders")
-    .where("orders.user_id", user_id);
 
     return response.json(orders);
   };
