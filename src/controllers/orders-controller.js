@@ -9,7 +9,7 @@ class OrdersController {
     const dishDetails = description.map(dish => `${dish.quantity} x ${dish.name}`).join(", ");
 
     const [orderId] = await knex("orders").insert({
-      status: "Pendente",
+      status: "Preparando",
       details: dishDetails,
       user_id
     }).returning("id");
@@ -42,7 +42,7 @@ class OrdersController {
     const order = await knex("orders").where({ id }).first();
 
     return response.json({ order });
-  }
+  };
 }
 
 module.exports = OrdersController;
