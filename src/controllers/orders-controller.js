@@ -1,16 +1,15 @@
 const knex = require("../database/knex");
 
 class OrdersController {
-
   async create(request, response) {
     const { description } = request.body;
     const user_id = request.user.id;
 
-    const dishDetails = description.map(dish => `${dish.quantity} x ${dish.name}`).join(", ");
+    const detailsJson = JSON.stringify(description);
 
     const [orderId] = await knex("orders").insert({
       status: "Preparando",
-      details: dishDetails,
+      details: detailsJson,
       user_id
     }).returning("id");
 
@@ -38,8 +37,13 @@ class OrdersController {
 
   async show(request, response) {
     const { id } = request.params;
+    const userId = request.user.id
 
     const order = await knex("orders").where({ id }).first();
+
+    if(order.user_id !== userId) {
+      return response.status(403).json({error: "Acesso não autorizado"})
+    }
 
     return response.json({ order });
   };

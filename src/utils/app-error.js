@@ -6,6 +6,6 @@ class appError {
     this.message = message;
     this.statusCode = statusCode;
   };
-}
+};
 
 module.exports = appError;

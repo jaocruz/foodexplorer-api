@@ -1,7 +1,6 @@
 const knex = require("../database/knex");
 
 class favoritesController {
-
   async create(request, response){
     const { dish_id } = request.body;
     const user_id = request.user.id;

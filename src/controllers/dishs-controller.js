@@ -143,7 +143,7 @@ class DishsController {
 
     return response.json(dishWithIngredients);
 
-  }
+  };
 }
 
 module.exports = DishsController;
